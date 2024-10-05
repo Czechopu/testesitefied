@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plataforma de Monitoramento de Resíduos</title>
+    <style>  
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 0;
+            text-align: center;
+        }
+        section {
+            margin: 20px;
+        }
+        form {
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        input, textarea, button {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #map {
+            height: 400px;
+            width: 100%;
+            margin: 10px 0;
+        }
+        .problem-description {
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 5px;
+        }
+    </style>
+    <!-- Incluindo os estilos e scripts do Leaflet -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+</head>
+<body>
+    <header>
+        <h1>Plataforma de Monitoramento de Resíduos</h1>
+        <p>Ajude a reportar locais de descarte irregular de lixo em Tianguá, Ceará</p>
+    </header>
+
+    <section>
+        <h2>Reportar Descarte Irregular</h2>
+        <form id="reportForm" action="/enviar-report" method="POST">
+            <label for="nome">Seu Nome:</label>
+            <input type="text" id="nome" name="nome" required>
+
+            <label for="local">Local do Descarte:</label>
+            <input type="text" id="local" name="local" required>
+
+            <label for="descricao">Descrição do Problema:</label>
+            <textarea id="descricao" name="descricao" rows="4" required></textarea>
+
+            <label for="foto">Anexar Foto (opcional):</label>
+            <input type="file" id="foto" name="foto" accept="image/*">
+
+            <label for="map">Selecione o Local no Mapa:</label>
+            <div id="map"></div>
+            <input type="hidden" id="latitude" name="latitude">
+            <input type="hidden" id="longitude" name="longitude">
+
+            <button type="submit">Enviar Reporte</button>
+        </form>
+    </section>
+
+    <section>
+        <h2>Problemas Causados pelo Descarte Irregular de Lixo</h2>
+        <div class="problem-description">
+            <p>O descarte inadequado de resíduos em locais não permitidos causa diversos problemas para o meio ambiente e para a saúde pública. Entre eles:</p>
+            <ul>
+                <li>Poluição do solo e das águas, prejudicando a flora e fauna local.</li>
+                <li>Proliferação de doenças transmitidas por vetores como mosquitos e ratos.</li>
+                <li>Entupimento de bueiros, causando enchentes em períodos chuvosos.</li>
+                <li>Degradação da paisagem, afetando o turismo e a qualidade de vida dos moradores.</li>
+            </ul>
+        </div>
+    </section>
+
+    <script>
+        // Inicializa o mapa centrado em Tianguá, Ceará
+        let map = L.map('map').setView([-3.7291, -40.9924], 13); // Coordenadas de Tianguá
+
+        // Adiciona o mapa OpenStreetMap usando Leaflet
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+        }).addTo(map);
+
+        let marker;
+
+        // Adiciona evento de clique para o usuário selecionar a localização
+        map.on('click', function (e) {
+            // Remove o marcador anterior, se existir
+            if (marker) {
+                map.removeLayer(marker);
+            }
+
+            // Coloca o marcador no local clicado
+            marker = L.marker(e.latlng).addTo(map);
+
+            // Armazena a latitude e longitude nos campos ocultos
+            document.getElementById("latitude").value = e.latlng.lat;
+            document.getElementById("longitude").value = e.latlng.lng;
+        });
+
+        // Função para emitir o alerta e limpar o formulário após o envio
+        document.getElementById("reportForm").addEventListener("submit", function(event){
+            event.preventDefault(); // Evita o envio imediato do formulário
+
+            // Exibe alerta de sucesso
+            alert("Reporte enviado com sucesso!");
+
+            // Limpa os campos do formulário
+            document.getElementById("reportForm").reset();
+
+            // Limpa o marcador do mapa
+            if (marker) {
+                map.removeLayer(marker);
+            }
+        });
+    </script>
+</body>
+</html>
