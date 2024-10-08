@@ -26,7 +26,7 @@
             border-radius: 5px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
-        input, textarea, button {
+        input, textarea, button, select {
             width: 100%;
             padding: 10px;
             margin: 10px 0;
@@ -69,19 +69,46 @@
             <label for="nome">Seu Nome:</label>
             <input type="text" id="nome" name="nome" required>
 
-            <label for="local">Local do Descarte:</label>
-            <input type="text" id="local" name="local" required>
+            <label for="localizacaoTipo">Como deseja informar o local do descarte?</label>
+            <select id="localizacaoTipo" name="localizacaoTipo" required>
+                <option value="mapa">Selecionar no Mapa</option>
+                <option value="manual">Inserir Manualmente</option>
+            </select>
+
+            <div id="manualEntry" style="display: none;">
+                <label for="endereco">Endereço: </label>
+                <input type="text" id="endereco" name="endereco">
+
+                <label for="bairro">Bairro:</label>
+                <select id="bairro" name="bairro">
+                    <option value="Centro">Centro</option>
+                    <option value="Cajueiro">Cajueiro</option>
+                    <option value="Cidade Alta">Cidade Alta</option>
+                    <option value="Dom Timóteo">Dom Timóteo</option>
+                    <option value="Estádio">Estádio</option>
+                    <option value="Fátima">Fátima</option>
+                    <option value="Frecheiras">Frecheiras</option>
+                    <option value="Gonçalo Mota">Gonçalo Mota</option>
+                    <option value="Pau D'arco">Pau D'arco</option>
+                    <option value="Pedra Alta">Pedra Alta</option>
+                    <option value="Santo Antônio">Santo Antônio</option>
+                    <option value="São José">São José</option>
+                    <option value="Tibiquari">Tibiquari</option>
+                </select>
+            </div>
+
+            <div id="mapSection">
+                <label for="map">Selecione o Local no Mapa:</label>
+                <div id="map"></div>
+                <input type="hidden" id="latitude" name="latitude">
+                <input type="hidden" id="longitude" name="longitude">
+            </div>
 
             <label for="descricao">Descrição do Problema:</label>
             <textarea id="descricao" name="descricao" rows="4" required></textarea>
 
             <label for="foto">Anexar Foto (opcional):</label>
             <input type="file" id="foto" name="foto" accept="image/*">
-
-            <label for="map">Selecione o Local no Mapa:</label>
-            <div id="map"></div>
-            <input type="hidden" id="latitude" name="latitude">
-            <input type="hidden" id="longitude" name="longitude">
 
             <button type="submit">Enviar Reporte</button>
         </form>
@@ -124,6 +151,18 @@
             // Armazena a latitude e longitude nos campos ocultos
             document.getElementById("latitude").value = e.latlng.lat;
             document.getElementById("longitude").value = e.latlng.lng;
+        });
+
+        // Alterna entre mapa e entrada manual
+        document.getElementById('localizacaoTipo').addEventListener('change', function () {
+            let tipo = this.value;
+            if (tipo === 'manual') {
+                document.getElementById('mapSection').style.display = 'none';
+                document.getElementById('manualEntry').style.display = 'block';
+            } else if (tipo === 'mapa') {
+                document.getElementById('manualEntry').style.display = 'none';
+                document.getElementById('mapSection').style.display = 'block';
+            }
         });
 
         // Função para emitir o alerta e limpar o formulário após o envio
